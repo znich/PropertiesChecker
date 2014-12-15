@@ -1,0 +1,24 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="PropertiesChecker:war exploded">
+    <output-path>$PROJECT_DIR$/target/propertiesChecker</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="PropertiesChecker" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="Maven: com.puppycrawl.tools:checkstyle:5.4" />
+          <element id="library" level="project" name="Maven: antlr:antlr:2.7.7" />
+          <element id="library" level="project" name="Maven: commons-beanutils:commons-beanutils-core:1.8.3" />
+          <element id="library" level="project" name="Maven: commons-logging:commons-logging:1.1.1" />
+          <element id="library" level="project" name="Maven: commons-cli:commons-cli:1.2" />
+          <element id="library" level="project" name="Maven: com.google.collections:google-collections:1.0" />
+        </element>
+      </element>
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="D:\Programms\Java\workspace\androidfp_examples\PropertiesChecker\target/MANIFEST.MF" />
+      </element>
+      <element id="javaee-facet-resources" facet="PropertiesChecker/web/Web" />
+    </root>
+  </artifact>
+</component>
