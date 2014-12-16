@@ -3,7 +3,6 @@ package com.xalmiento.desknet.checkstyle;
 import com.puppycrawl.tools.checkstyle.api.AbstractFileSetCheck;
 import com.xalmiento.desknet.checkstyle.phraseapp.APIServiceFactory;
 import com.xalmiento.desknet.checkstyle.phraseapp.PhraseAppKeysAPIService;
-import com.xalmiento.desknet.checkstyle.phraseapp.model.Key;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,7 +27,9 @@ public class DuplicatePropertiesKeysCheck extends AbstractFileSetCheck {
 
     private String[] exclusions;
 
-    private String token;
+    private String phraseAppToken;
+
+    private Boolean enablePhraseApp;
 
     private HashMap<String, Property> keysValues = new HashMap<String, Property>();
 
@@ -91,12 +92,12 @@ public class DuplicatePropertiesKeysCheck extends AbstractFileSetCheck {
     }
 
     private void findMissingProperty(File file, List<String> lines) throws IOException {
-        if (token == null) {
+        if (!enablePhraseApp || phraseAppToken == null) {
             return;
         }
         Set<String> existKeys = getKeys(file);
 
-        PhraseAppKeysAPIService keysService = apiServiceFactory.getKeysService(token);
+        PhraseAppKeysAPIService keysService = apiServiceFactory.getKeysService(phraseAppToken);
 
         List<String> keys = keysService.getKeys(existKeys.toArray(new String[existKeys.size()]));
 
@@ -129,8 +130,8 @@ public class DuplicatePropertiesKeysCheck extends AbstractFileSetCheck {
         this.exclusions = exclusions;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setPhraseAppToken(String phraseAppToken) {
+        this.phraseAppToken = phraseAppToken;
     }
 
     public class Property {
@@ -155,5 +156,7 @@ public class DuplicatePropertiesKeysCheck extends AbstractFileSetCheck {
         }
     }
 
-
+    public void setEnablePhraseApp(Boolean enablePhraseApp) {
+        this.enablePhraseApp = enablePhraseApp;
+    }
 }
