@@ -1,4 +1,6 @@
-package com.xalmiento.desknet.checkstyle.phraseapp;
+package com.xalmiento.desknet.checkstyle.phraseapp.impl;
+
+import com.xalmiento.desknet.checkstyle.phraseapp.PhraseAppAPIService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,13 +20,13 @@ public class PhraseAppAPIServiceImpl<T> implements PhraseAppAPIService<T> {
 
     private String token;
 
-    private String apiUrl = "https://phraseapp.com/api/v1/";
+    private static final String apiUrl = "https://phraseapp.com/api/v1/";
 
     public PhraseAppAPIServiceImpl(String token) {
         this.token = token;
     }
 
-
+    @Override
     public List<T> getList(
             String url,
             Class<T> type,
@@ -38,6 +40,25 @@ public class PhraseAppAPIServiceImpl<T> implements PhraseAppAPIService<T> {
             return result;
         } catch (IOException e) {
            e.printStackTrace();
+        }
+        return result;
+    }
+
+    @Override
+    public List<T> getList(
+            String url,
+            Class<T> type,
+            Map<String, String> parameters,
+            Map<String, String[]> arrays,
+            Map<String, String> headers) {
+
+        List<T> result = new ArrayList<T>();
+        addToken(parameters);
+        try {
+            result = jsonListRequestGet(createUrl(url), type, parameters, headers);
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return result;
     }

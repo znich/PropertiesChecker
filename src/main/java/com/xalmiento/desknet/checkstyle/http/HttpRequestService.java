@@ -59,10 +59,19 @@ public class HttpRequestService {
         return new HttpResponse<T>(responseCode, result);
 
     }
+    public <T> HttpResponse<T> requestGet(
+            String urlAddress,
+            Map<String, String> parameters,
+            Map<String, String> properties,
+            Parser<T> parser) throws IOException{
+       return requestGet(urlAddress, parameters, null, properties, parser);
+    }
+
 
     public <T> HttpResponse<T> requestGet(
             String urlAddress,
             Map<String, String> parameters,
+            Map<String, String[]> arrays,
             Map<String, String> properties,
             Parser<T> parser) throws IOException{
         HttpClient httpClient = HttpClientBuilder.create().build();
@@ -73,6 +82,13 @@ public class HttpRequestService {
             if (parameters != null){
                 for (Map.Entry<String, String> entry:parameters.entrySet()){
                     uriBuilder.addParameter(entry.getKey(), entry.getValue());
+                }
+            }
+            if (arrays != null) {
+                for (Map.Entry<String, String[]> entry : arrays.entrySet()) {
+                    for (String value : entry.getValue()) {
+                        uriBuilder.addParameter(entry.getKey(), value);
+                    }
                 }
             }
             uri = uriBuilder.build();

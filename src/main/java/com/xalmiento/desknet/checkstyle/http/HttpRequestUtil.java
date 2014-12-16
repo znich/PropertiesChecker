@@ -109,6 +109,16 @@ public class HttpRequestUtil {
                 urlAddress, parameters, properties, new JsonListParser<T>(clazz)));
     }
 
+    public static <T> List<T> jsonListRequestGet(
+            String urlAddress,
+            Class<T> clazz,
+            Map<String, String> parameters,
+            Map<String, String[]> arrays,
+            Map<String, String> properties) throws IOException {
+        return checkResponse(service.requestGet(
+                urlAddress, parameters, arrays, properties, new JsonListParser<T>(clazz)));
+    }
+
     public static <T> List<T> jsonListRequestPost(
             String urlAddress,
             Class<T> clazz,

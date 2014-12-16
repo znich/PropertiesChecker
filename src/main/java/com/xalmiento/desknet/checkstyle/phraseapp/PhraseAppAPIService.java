@@ -17,4 +17,11 @@ public interface PhraseAppAPIService<T> {
             Class<T> type,
             Map<String, String> parameters,
             Map<String, String> headers);
+
+    List<T> getList(
+            String url,
+            Class<T> type,
+            Map<String, String> parameters,
+            Map<String, String[]> arrays,
+            Map<String, String> headers);
 }
