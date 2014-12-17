@@ -59,6 +59,7 @@ public class PropertiesKeysCheck extends AbstractFileSetCheck {
             for (LocalizedMessage message : messages.getMessages()) {
                 getMessageCollector().add(message);
             }
+            messages.reset();
         }
     }
 
