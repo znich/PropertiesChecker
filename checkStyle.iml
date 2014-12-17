@@ -10,11 +10,11 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: com.puppycrawl.tools:checkstyle:5.4" level="project" />
+    <orderEntry type="library" name="Maven: com.puppycrawl.tools:checkstyle:5.7" level="project" />
     <orderEntry type="library" name="Maven: antlr:antlr:2.7.7" level="project" />
     <orderEntry type="library" name="Maven: commons-beanutils:commons-beanutils-core:1.8.3" level="project" />
     <orderEntry type="library" name="Maven: commons-cli:commons-cli:1.2" level="project" />
-    <orderEntry type="library" name="Maven: com.google.collections:google-collections:1.0" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava-jdk5:14.0.1" level="project" />
     <orderEntry type="module-library">
       <library name="Maven: com.sun:tools:1.5.0">
         <CLASSES>
