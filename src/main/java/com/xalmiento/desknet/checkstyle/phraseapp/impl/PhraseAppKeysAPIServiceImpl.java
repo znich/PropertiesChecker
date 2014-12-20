@@ -30,18 +30,11 @@ public class PhraseAppKeysAPIServiceImpl extends PhraseAppAPIServiceImpl<Key>
     }
 
     @Override
-    public List<String> getKeys(String... keys) {
+    public List<Key> getKeys(String... keys) {
         Map<String, String[]> params = new HashMap<String, String[]>();
-        params.put("translation_keys", keys);
-        List<Key> list = getList(KEYS_URL, Key.class, new HashMap<String, String>(), params,  null);
+        params.put("key_names[]", keys);
 
-        List<String> result = new ArrayList<String>(list.size());
-
-        for (Key key : list) {
-            result.add(key.getName());
-        }
-
-        return result;
+        return getList(KEYS_URL, Key.class, new HashMap<String, String>(), params,  null);
     }
 
 }

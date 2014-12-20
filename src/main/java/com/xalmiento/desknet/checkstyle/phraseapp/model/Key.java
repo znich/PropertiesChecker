@@ -75,6 +75,17 @@ public class Key {
         this.tag_list = tag_list;
     }
 
+    public boolean hasTag(String otherTag) {
+        if (this.tag_list == null || otherTag == null) {
+            return false;
+        }
+        for (String tag: tag_list) {
+            if (tag.equals(otherTag)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     public boolean equals(Object o) {

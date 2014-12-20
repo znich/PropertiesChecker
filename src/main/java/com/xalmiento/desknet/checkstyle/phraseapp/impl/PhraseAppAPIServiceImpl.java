@@ -3,7 +3,9 @@ package com.xalmiento.desknet.checkstyle.phraseapp.impl;
 import com.xalmiento.desknet.checkstyle.phraseapp.PhraseAppAPIService;
 
 import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +21,8 @@ import static com.xalmiento.desknet.checkstyle.http.HttpRequestUtil.*;
 public class PhraseAppAPIServiceImpl<T> implements PhraseAppAPIService<T> {
 
     private String token;
+
+    private Class<T> type;
 
     private static final String apiUrl = "https://phraseapp.com/api/v1/";
 
@@ -55,7 +59,7 @@ public class PhraseAppAPIServiceImpl<T> implements PhraseAppAPIService<T> {
         List<T> result = new ArrayList<T>();
         addToken(parameters);
         try {
-            result = jsonListRequestGet(createUrl(url), type, parameters, headers);
+            result = jsonListRequestGet(createUrl(url), type, parameters, arrays, headers);
             return result;
         } catch (IOException e) {
             e.printStackTrace();
@@ -68,6 +72,9 @@ public class PhraseAppAPIServiceImpl<T> implements PhraseAppAPIService<T> {
     }
 
     private void addToken(Map<String, String> parameters) {
+        if (parameters == null) {
+            parameters = new HashMap<String, String>();
+        }
         parameters.put("auth_token", token);
     }
 

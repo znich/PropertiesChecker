@@ -21,7 +21,7 @@ public class DuplicatePropertiesKeysChecker extends AbstractPropertiesKeysChecke
 
     private String[] exclusions;
 
-    private HashMap<String, Property> keysValues = new HashMap<String, Property>();
+    private HashMap<String, String> keysValues = new HashMap<String, String>();
 
     private List<String> exclusionList = exclusions != null
             ? Arrays.asList(exclusions)
@@ -43,13 +43,13 @@ public class DuplicatePropertiesKeysChecker extends AbstractPropertiesKeysChecke
                     continue;
                 }
                 String fileName = file.getName();
-                Property duplicate = keysValues.put(key, new Property(key, fileName));
-                if (duplicate != null && duplicate.notCurrentFile(fileName)) {
+                String duplicate = keysValues.put(key, fileName);
+                if (duplicate != null && !duplicate.equals(fileName)) {
                     log(findRowNumber(key, lines), String.format(
                             DUPLICATE_PROPERTY_MESSAGE,
                             key,
                             file.getName(),
-                            duplicate.getFileName()));
+                            duplicate));
                 }
             }
         } catch (IOException e) {
@@ -57,28 +57,6 @@ public class DuplicatePropertiesKeysChecker extends AbstractPropertiesKeysChecke
         }
 
         return getMessageCollector();
-    }
-
-    public class Property {
-        private String key;
-        private String fileName;
-
-        public Property(String key, String fileName) {
-            this.key = key;
-            this.fileName = fileName;
-        }
-
-        private boolean notCurrentFile(String fileName) {
-            return !getFileName().equals(fileName);
-        }
-
-        public String getKey() {
-            return key;
-        }
-
-        public String getFileName() {
-            return fileName;
-        }
     }
 
 }

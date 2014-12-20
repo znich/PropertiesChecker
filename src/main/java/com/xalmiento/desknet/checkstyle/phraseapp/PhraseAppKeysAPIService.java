@@ -15,5 +15,5 @@ public interface PhraseAppKeysAPIService extends PhraseAppAPIService<Key> {
 
     List<Key> getKeys();
 
-    List<String> getKeys(String... keys);
+    List<Key> getKeys(String... keys);
 }

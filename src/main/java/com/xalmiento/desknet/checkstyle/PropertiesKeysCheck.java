@@ -47,6 +47,22 @@ public class PropertiesKeysCheck extends AbstractFileSetCheck {
         }
     }
 
+    private boolean checkFileDirectory(File file) {
+        String path = file.getParent();
+        String fileName = file.getName();
+        return path.endsWith(directory) && fileName.matches(PROPERTIES_FILE_REGEX);
+    }
+
+    private void initServicesFactories() {
+        if (apiServiceFactory == null) {
+            apiServiceFactory = new APIServiceFactory();
+        }
+
+        if (checkerFactory == null) {
+            checkerFactory = new CheckerFactory();
+        }
+    }
+
     private void checkDuplicate(File file, List<String> lines) {
         DuplicatePropertiesKeysChecker duplicateChecker
                 = checkerFactory.getDuplicatePropertiesKeysChecker(exclusions);
@@ -69,22 +85,6 @@ public class PropertiesKeysCheck extends AbstractFileSetCheck {
                     = checkerFactory.getPhraseAppPropertiesKeysChecker(phraseAppToken);
             LocalizedMessages messages = phraseAppChecker.processCheck(file, lines);
             updateMessages(messages);
-        }
-    }
-
-    private boolean checkFileDirectory(File file) {
-        String path = file.getParent();
-        String fileName = file.getName();
-        return path.endsWith(directory) && fileName.matches(PROPERTIES_FILE_REGEX);
-    }
-
-    private void initServicesFactories() {
-        if (apiServiceFactory == null) {
-            apiServiceFactory = new APIServiceFactory();
-        }
-
-        if (checkerFactory == null) {
-            checkerFactory = new CheckerFactory();
         }
     }
 

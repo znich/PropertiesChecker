@@ -23,7 +23,7 @@ public abstract class AbstractPropertiesKeysChecker extends AbstractFileSetCheck
 
     @Override
     protected void processFiltered(File aFile, List<String> aLines) {
-        //nothing. it never called
+        //nothing, it is never called
     }
 
     protected Set<String> getKeys(File file) throws IOException {
