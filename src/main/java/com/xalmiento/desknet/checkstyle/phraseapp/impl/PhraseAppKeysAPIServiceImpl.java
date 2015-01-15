@@ -3,7 +3,6 @@ package com.xalmiento.desknet.checkstyle.phraseapp.impl;
 import com.xalmiento.desknet.checkstyle.phraseapp.PhraseAppKeysAPIService;
 import com.xalmiento.desknet.checkstyle.phraseapp.model.Key;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

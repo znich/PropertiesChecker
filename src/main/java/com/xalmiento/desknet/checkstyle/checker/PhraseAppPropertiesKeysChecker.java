@@ -3,7 +3,10 @@ package com.xalmiento.desknet.checkstyle.checker;
 import com.puppycrawl.tools.checkstyle.api.LocalizedMessages;
 import com.xalmiento.desknet.checkstyle.phraseapp.APIServiceFactory;
 import com.xalmiento.desknet.checkstyle.phraseapp.PhraseAppKeysAPIService;
+import com.xalmiento.desknet.checkstyle.phraseapp.impl.PhraseAppResourcesAPIServiceImpl;
 import com.xalmiento.desknet.checkstyle.phraseapp.model.Key;
+import com.xalmiento.desknet.checkstyle.phraseapp.model.PhraseAppResourcesAPIService;
+import com.xalmiento.desknet.checkstyle.phraseapp.model.Property;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +35,9 @@ public class PhraseAppPropertiesKeysChecker extends AbstractPropertiesKeysChecke
     private static final String WRONG_TAG_MESSAGE =
             "Property key \"%s\" has not the required tag name \"%s\".";
 
+    private static final String DELETED_KEY_MESSAGE =
+            "Property key \"%s\" was deleted from %s, but it still exists at PhraseApp.";
+
     public static final String TAD_REGEXP = "^((?!Msg).*)Msg\\.properties$";
 
     public PhraseAppPropertiesKeysChecker(String phraseAppToken) {
@@ -42,6 +48,7 @@ public class PhraseAppPropertiesKeysChecker extends AbstractPropertiesKeysChecke
     public LocalizedMessages processCheck(File file, List<String> lines) {
         initServiceFactory();
         findMissingProperty(file, lines);
+        findDeletedProperty(file);
         return getMessageCollector();
     }
 
@@ -78,6 +85,26 @@ public class PhraseAppPropertiesKeysChecker extends AbstractPropertiesKeysChecke
         getMessageCollector();
     }
 
+    private void findDeletedProperty(File file) {
+        try {
+            Set<String> existKeys = getKeys(file);
+            PhraseAppResourcesAPIService resourcesAPIService =
+                    apiServiceFactory.getResourcesService(phraseAppToken);
+
+            List<Property> properties = resourcesAPIService.getProperties(
+                    parseCurrentFileTag(file));
+
+            for (Property property : properties) {
+                String key = property.getKey();
+                if (!existKeys.contains(key)) {
+                    log(0, String.format(DELETED_KEY_MESSAGE, key, file.getName()));
+                }
+            }
+        } catch (IOException e) {
+            log(0, "unable.open", file.getPath());
+        }
+    }
+
     private void initServiceFactory() {
         if (apiServiceFactory == null) {
             apiServiceFactory = new APIServiceFactory();
@@ -105,8 +132,12 @@ public class PhraseAppPropertiesKeysChecker extends AbstractPropertiesKeysChecke
 
     //testing method
     public static void main(String[] args) {
-        String s = parseCurrentFileTag2("CommonMsg.properties");
-        System.out.println(s);
+        /*String s = parseCurrentFileTag2("CommonMsg.properties");
+        System.out.println(s);*/
+        PhraseAppResourcesAPIService resourcesAPIService = new PhraseAppResourcesAPIServiceImpl(
+                "");
+        List<Property> common = resourcesAPIService.getProperties("Common");
+        System.out.println(common);
     }
 
     private static String parseCurrentFileTag2(String file) {

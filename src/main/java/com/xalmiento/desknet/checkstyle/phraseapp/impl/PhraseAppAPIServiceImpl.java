@@ -1,9 +1,9 @@
 package com.xalmiento.desknet.checkstyle.phraseapp.impl;
 
+import com.xalmiento.desknet.checkstyle.phraseapp.model.LocalizationResource;
 import com.xalmiento.desknet.checkstyle.phraseapp.PhraseAppAPIService;
 
 import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,6 +65,19 @@ public class PhraseAppAPIServiceImpl<T> implements PhraseAppAPIService<T> {
             e.printStackTrace();
         }
         return result;
+    }
+
+    protected LocalizationResource getResource(
+            String url, Map<String, String> parameters, Map<String, String> headers) {
+        addToken(parameters);
+        LocalizationResource localizationResource = new LocalizationResource();
+        try {
+            localizationResource = xmlRequestGet(
+                    createUrl(url), LocalizationResource.class, parameters, headers);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return localizationResource;
     }
 
     private String createUrl(String url) {

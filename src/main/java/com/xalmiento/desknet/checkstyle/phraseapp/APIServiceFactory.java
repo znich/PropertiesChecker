@@ -1,6 +1,8 @@
 package com.xalmiento.desknet.checkstyle.phraseapp;
 
 import com.xalmiento.desknet.checkstyle.phraseapp.impl.PhraseAppKeysAPIServiceImpl;
+import com.xalmiento.desknet.checkstyle.phraseapp.impl.PhraseAppResourcesAPIServiceImpl;
+import com.xalmiento.desknet.checkstyle.phraseapp.model.PhraseAppResourcesAPIService;
 
 /**
  * Revision Info : $Author$ $Date$
@@ -12,6 +14,7 @@ import com.xalmiento.desknet.checkstyle.phraseapp.impl.PhraseAppKeysAPIServiceIm
 public class APIServiceFactory {
 
     private PhraseAppKeysAPIService keysAPIService;
+    private PhraseAppResourcesAPIService resourcesAPIService;
 
     public APIServiceFactory() {
     }
@@ -21,5 +24,12 @@ public class APIServiceFactory {
               keysAPIService = new PhraseAppKeysAPIServiceImpl(token);
           }
         return keysAPIService;
+    }
+
+    public PhraseAppResourcesAPIService getResourcesService(String token) {
+        if (resourcesAPIService == null) {
+            resourcesAPIService = new PhraseAppResourcesAPIServiceImpl(token);
+        }
+        return resourcesAPIService;
     }
 }
