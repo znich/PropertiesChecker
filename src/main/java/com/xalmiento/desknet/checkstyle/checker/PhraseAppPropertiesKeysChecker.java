@@ -5,7 +5,7 @@ import com.xalmiento.desknet.checkstyle.phraseapp.APIServiceFactory;
 import com.xalmiento.desknet.checkstyle.phraseapp.PhraseAppKeysAPIService;
 import com.xalmiento.desknet.checkstyle.phraseapp.impl.PhraseAppResourcesAPIServiceImpl;
 import com.xalmiento.desknet.checkstyle.phraseapp.model.Key;
-import com.xalmiento.desknet.checkstyle.phraseapp.model.PhraseAppResourcesAPIService;
+import com.xalmiento.desknet.checkstyle.phraseapp.PhraseAppResourcesAPIService;
 import com.xalmiento.desknet.checkstyle.phraseapp.model.Property;
 
 import java.io.File;

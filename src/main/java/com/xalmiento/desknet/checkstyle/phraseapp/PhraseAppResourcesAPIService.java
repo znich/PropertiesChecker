@@ -1,6 +1,7 @@
-package com.xalmiento.desknet.checkstyle.phraseapp.model;
+package com.xalmiento.desknet.checkstyle.phraseapp;
 
 import com.xalmiento.desknet.checkstyle.phraseapp.PhraseAppAPIService;
+import com.xalmiento.desknet.checkstyle.phraseapp.model.Property;
 
 import java.util.List;
 

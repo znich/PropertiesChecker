@@ -2,7 +2,6 @@ package com.xalmiento.desknet.checkstyle.phraseapp;
 
 import com.xalmiento.desknet.checkstyle.phraseapp.impl.PhraseAppKeysAPIServiceImpl;
 import com.xalmiento.desknet.checkstyle.phraseapp.impl.PhraseAppResourcesAPIServiceImpl;
-import com.xalmiento.desknet.checkstyle.phraseapp.model.PhraseAppResourcesAPIService;
 
 /**
  * Revision Info : $Author$ $Date$
