@@ -16,10 +16,9 @@ import java.util.Map;
  * @author a.laguta
  */
 public class PhraseAppResourcesAPIServiceImpl
-        extends PhraseAppAPIServiceImpl<Property>
-        implements PhraseAppResourcesAPIService {
+        extends PhraseAppAPIServiceImpl<Property> implements PhraseAppResourcesAPIService {
 
-    public static final String url = "translations/download";
+    public static final String URL = "translations/download";
 
     public PhraseAppResourcesAPIServiceImpl(String token) {
         super(token);
@@ -31,7 +30,7 @@ public class PhraseAppResourcesAPIServiceImpl
         parameters.put("tag", tag);
         parameters.put("locale", "en");
         parameters.put("format", "xml");
-        List<Property> properties = getResource(url, parameters, null).getProperties();
+        List<Property> properties = getResource(URL, parameters, null).getProperties();
         return properties != null ? properties : Collections.<Property>emptyList();
     }
 }

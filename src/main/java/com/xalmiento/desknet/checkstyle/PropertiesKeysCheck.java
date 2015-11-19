@@ -12,6 +12,8 @@ import com.xalmiento.desknet.checkstyle.checker.CheckerFactory;
 
 import java.io.File;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Revision Info : $Author$ $Date$
@@ -22,9 +24,9 @@ import java.util.List;
  */
 public class PropertiesKeysCheck extends AbstractFileSetCheck {
 
-    private String directory;
+    private String[] directories;
 
-    private String[] exclusions;
+    private String[] duplicateExclusions;
 
     private String phraseAppToken;
 
@@ -34,12 +36,13 @@ public class PropertiesKeysCheck extends AbstractFileSetCheck {
 
     private CheckerFactory checkerFactory;
 
-    private static final String PROPERTIES_FILE_REGEX = "[^_]*properties$";
+    private static final String PROPERTIES_FILE_REGEX =
+            "^((((?!Msg).*)Msg)|(ApplicationResources))\\.properties$";
 
 
     @Override
     protected void processFiltered(File file, List<String> lines) {
-        if (checkFileDirectory(file)) {
+        if (validateFile(file)) {
             initServicesFactories();
 
             checkDuplicate(file, lines);
@@ -47,10 +50,23 @@ public class PropertiesKeysCheck extends AbstractFileSetCheck {
         }
     }
 
-    private boolean checkFileDirectory(File file) {
+    private boolean validateFile(File file) {
         String path = file.getParent();
         String fileName = file.getName();
-        return path.endsWith(directory) && fileName.matches(PROPERTIES_FILE_REGEX);
+        return checkFileDirectory(path) && checkFileName(fileName);
+    }
+
+    private boolean checkFileDirectory(String path) {
+        for (String directory : directories) {
+            if (path.endsWith(directory)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean checkFileName(String fileName) {
+        return fileName.matches(PROPERTIES_FILE_REGEX);
     }
 
     private void initServicesFactories() {
@@ -65,7 +81,7 @@ public class PropertiesKeysCheck extends AbstractFileSetCheck {
 
     private void checkDuplicate(File file, List<String> lines) {
         DuplicatePropertiesKeysChecker duplicateChecker
-                = checkerFactory.getDuplicatePropertiesKeysChecker(exclusions);
+                = checkerFactory.getDuplicatePropertiesKeysChecker(duplicateExclusions);
         LocalizedMessages messages = duplicateChecker.processCheck(file, lines);
         updateMessages(messages);
     }
@@ -93,12 +109,8 @@ public class PropertiesKeysCheck extends AbstractFileSetCheck {
         super.setupChild(aChildConf);
     }
 
-    public void setDirectory(String directory) {
-        this.directory = directory;
-    }
-
-    public void setExclusions(String[] exclusions) {
-        this.exclusions = exclusions;
+    public void setDuplicateExclusions(String[] duplicateExclusions) {
+        this.duplicateExclusions = duplicateExclusions;
     }
 
     public void setPhraseAppToken(String phraseAppToken) {
@@ -107,5 +119,20 @@ public class PropertiesKeysCheck extends AbstractFileSetCheck {
 
     public void setEnablePhraseApp(Boolean enablePhraseApp) {
         this.enablePhraseApp = enablePhraseApp;
+    }
+
+    public void setDirectories(String[] directories) {
+        this.directories = directories;
+    }
+
+
+    /**
+     * Test
+     * @param args
+     */
+    public static void main(String[] args) {
+        Matcher matcher = Pattern.compile(PROPERTIES_FILE_REGEX).matcher("");
+        System.out.println(matcher.find());
+
     }
 }

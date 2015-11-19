@@ -19,19 +19,19 @@ import java.util.Set;
  */
 public class DuplicatePropertiesKeysChecker extends AbstractPropertiesKeysChecker {
 
-    private String[] exclusions;
-
-    private HashMap<String, String> keysValues = new HashMap<String, String>();
-
-    private List<String> exclusionList = exclusions != null
-            ? Arrays.asList(exclusions)
-            : new ArrayList<String>();
-    private static final String DUPLICATE_PROPERTY_MESSAGE =
+    public static final String DUPLICATE_PROPERTY_MESSAGE =
             "You have a duplicate property key \"%s\" in %s and %s. "
                     + "Try to reuse an exist property or rename one of them.";
 
+
+    private HashMap<String, String> keysValues = new HashMap<String, String>();
+    private List<String> exclusionList;
+
     public DuplicatePropertiesKeysChecker(String[] exclusions) {
-        this.exclusions = exclusions;
+        exclusionList = exclusions != null
+                ? Arrays.asList(exclusions)
+                : new ArrayList<String>();
+
     }
 
     @Override
@@ -39,10 +39,10 @@ public class DuplicatePropertiesKeysChecker extends AbstractPropertiesKeysChecke
         try {
             Set<String> objects = getKeys(file);
             for (String key : objects) {
-                if (exclusionList.contains(key)) {
+                String fileName = file.getName();
+                if (exclusionList.contains(fileName)) {
                     continue;
                 }
-                String fileName = file.getName();
                 String duplicate = keysValues.put(key, fileName);
                 if (duplicate != null && !duplicate.equals(fileName)) {
                     log(findRowNumber(key, lines), String.format(

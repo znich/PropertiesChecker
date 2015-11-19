@@ -24,7 +24,7 @@ public class PhraseAppAPIServiceImpl<T> implements PhraseAppAPIService<T> {
 
     private Class<T> type;
 
-    private static final String apiUrl = "https://phraseapp.com/api/v1/";
+    public static final String API_URL = "https://phraseapp.com/api/v1/";
 
     public PhraseAppAPIServiceImpl(String token) {
         this.token = token;
@@ -81,7 +81,7 @@ public class PhraseAppAPIServiceImpl<T> implements PhraseAppAPIService<T> {
     }
 
     private String createUrl(String url) {
-        return apiUrl + url;
+        return API_URL + url;
     }
 
     private void addToken(Map<String, String> parameters) {

@@ -3,7 +3,6 @@ package com.xalmiento.desknet.checkstyle.checker;
 import com.puppycrawl.tools.checkstyle.api.LocalizedMessages;
 import com.xalmiento.desknet.checkstyle.phraseapp.APIServiceFactory;
 import com.xalmiento.desknet.checkstyle.phraseapp.PhraseAppKeysAPIService;
-import com.xalmiento.desknet.checkstyle.phraseapp.impl.PhraseAppResourcesAPIServiceImpl;
 import com.xalmiento.desknet.checkstyle.phraseapp.model.Key;
 import com.xalmiento.desknet.checkstyle.phraseapp.PhraseAppResourcesAPIService;
 import com.xalmiento.desknet.checkstyle.phraseapp.model.Property;
@@ -26,19 +25,24 @@ import java.util.regex.Pattern;
  */
 public class PhraseAppPropertiesKeysChecker extends AbstractPropertiesKeysChecker {
 
-    private String phraseAppToken;
-    private APIServiceFactory apiServiceFactory;
-
-    private static final String MISSING_PROPERTY_MESSAGE =
+    public static final String MISSING_PROPERTY_MESSAGE =
             "Property key \"%s\" in %s is missing at PhraseApp.";
 
-    private static final String WRONG_TAG_MESSAGE =
+    public static final String WRONG_TAG_MESSAGE =
             "Property key \"%s\" has not the required tag name \"%s\".";
 
-    private static final String DELETED_KEY_MESSAGE =
+    public static final String DELETED_KEY_MESSAGE =
             "Property key \"%s\" was deleted from %s, but it still exists at PhraseApp.";
 
-    public static final String TAD_REGEXP = "^((?!Msg).*)Msg\\.properties$";
+    public static final String AJAX_PROPERTIES_SUFFIX = "Msg";
+
+    public static final String AJAX_TAG_REGEXP = "^((?!" + AJAX_PROPERTIES_SUFFIX + ").*)"
+            + AJAX_PROPERTIES_SUFFIX +"\\.properties$";
+
+    public static final String APPLICATION_TAG_REGEXP = "^((?!\\.properties).*)\\.properties$";
+
+    private String phraseAppToken;
+    private APIServiceFactory apiServiceFactory;
 
     public PhraseAppPropertiesKeysChecker(String phraseAppToken) {
         this.phraseAppToken = phraseAppToken;
@@ -52,13 +56,18 @@ public class PhraseAppPropertiesKeysChecker extends AbstractPropertiesKeysChecke
         return getMessageCollector();
     }
 
+    private void initServiceFactory() {
+        if (apiServiceFactory == null) {
+            apiServiceFactory = new APIServiceFactory();
+        }
+    }
+
     private void findMissingProperty(File file, List<String> lines){
         try {
             Set<String> existKeys = getKeys(file);
             PhraseAppKeysAPIService keysService = apiServiceFactory.getKeysService(phraseAppToken);
 
-            List<Key> keys = keysService.getKeys(existKeys.toArray(
-                    new String[existKeys.size()]));
+            List<Key> keys = keysService.getKeys(existKeys.toArray(new String[existKeys.size()]));
             List<String> keysNames = getKeysNames(keys);
 
             for (String exist : existKeys) {
@@ -85,32 +94,6 @@ public class PhraseAppPropertiesKeysChecker extends AbstractPropertiesKeysChecke
         getMessageCollector();
     }
 
-    private void findDeletedProperty(File file) {
-        try {
-            Set<String> existKeys = getKeys(file);
-            PhraseAppResourcesAPIService resourcesAPIService =
-                    apiServiceFactory.getResourcesService(phraseAppToken);
-
-            List<Property> properties = resourcesAPIService.getProperties(
-                    parseCurrentFileTag(file));
-
-            for (Property property : properties) {
-                String key = property.getKey();
-                if (!existKeys.contains(key)) {
-                    log(0, String.format(DELETED_KEY_MESSAGE, key, file.getName()));
-                }
-            }
-        } catch (IOException e) {
-            log(0, "unable.open", file.getPath());
-        }
-    }
-
-    private void initServiceFactory() {
-        if (apiServiceFactory == null) {
-            apiServiceFactory = new APIServiceFactory();
-        }
-    }
-
     private List<String> getKeysNames(Collection<Key> keys) {
         if (keys == null) {
             return null;
@@ -123,25 +106,47 @@ public class PhraseAppPropertiesKeysChecker extends AbstractPropertiesKeysChecke
     }
 
     private String parseCurrentFileTag(File file) {
-        Matcher matcher = Pattern.compile(TAD_REGEXP).matcher(file.getName());
+        String name = file.getName();
+        Matcher matcher = name.contains(AJAX_PROPERTIES_SUFFIX)
+                ? Pattern.compile(AJAX_TAG_REGEXP).matcher(name)
+                : Pattern.compile(APPLICATION_TAG_REGEXP).matcher(name);
         if (matcher.find()) {
             return matcher.group(1);
         }
         return null;
     }
 
-    //testing method
+    private void findDeletedProperty(File file) {
+        try {
+            Set<String> existKeys = getKeys(file);
+            PhraseAppResourcesAPIService resourcesService =
+                    apiServiceFactory.getResourcesService(phraseAppToken);
+
+            List<Property> properties = resourcesService.getProperties(parseCurrentFileTag(file));
+
+            for (Property property : properties) {
+                String key = property.getKey();
+                if (!existKeys.contains(key)) {
+                    log(0, String.format(DELETED_KEY_MESSAGE, key, file.getName()));
+                }
+            }
+        } catch (IOException e) {
+            log(0, "unable.open", file.getPath());
+        }
+    }
+
+    //test method
     public static void main(String[] args) {
         /*String s = parseCurrentFileTag2("CommonMsg.properties");
         System.out.println(s);*/
-        PhraseAppResourcesAPIService resourcesAPIService = new PhraseAppResourcesAPIServiceImpl(
-                "");
-        List<Property> common = resourcesAPIService.getProperties("Common");
-        System.out.println(common);
+     /*   PhraseAppResourcesAPIService resourcesAPIService = new PhraseAppResourcesAPIServiceImpl(
+                "3bc90a9df273f51636dc00ff47226df8");
+        List<Property> common = resourcesAPIService.getProperties("Common");*/
+        System.out.println(parseCurrentFileTag2("Common.properties"));
     }
 
     private static String parseCurrentFileTag2(String file) {
-        Matcher matcher = Pattern.compile(TAD_REGEXP).matcher(file);
+        Matcher matcher = Pattern.compile(APPLICATION_TAG_REGEXP).matcher(file);
         if (matcher.find()) {
             return matcher.group(1);
         }
