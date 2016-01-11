@@ -24,7 +24,7 @@ public class PhraseAppAPIServiceImpl<T> implements PhraseAppAPIService<T> {
 
     private Class<T> type;
 
-    public static final String API_URL = "https://phraseapp.com/api/v1/";
+    public static final String API_URL = "https://api.phraseapp.com/api/v1/";
 
     public PhraseAppAPIServiceImpl(String token) {
         this.token = token;
