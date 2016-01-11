@@ -3,6 +3,7 @@ package com.xalmiento.desknet.checkstyle.phraseapp;
 import com.xalmiento.desknet.checkstyle.phraseapp.model.Key;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Revision Info : $Author$ $Date$
@@ -13,7 +14,27 @@ import java.util.List;
  */
 public interface PhraseAppKeysAPIService extends PhraseAppAPIService<Key> {
 
+    /**
+     * Returns all keys
+     *
+     * @return
+     */
     List<Key> getKeys();
 
-    List<Key> getKeys(String... keys);
+    /**
+     * Returns list of {@link com.xalmiento.desknet.checkstyle.phraseapp.model.Key}
+     * with provided key names
+     *
+     * @param keys
+     * @return
+     */
+    List<Key> getKeys(Set<String> keys);
+
+    /**
+     * Returns list of keys with provided tag name
+     *
+     * @param tagName
+     * @return
+     */
+    List<Key> getKeys(String tagName);
 }

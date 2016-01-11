@@ -1,8 +1,5 @@
 package com.xalmiento.desknet.checkstyle.checker;
 
-import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
-import com.puppycrawl.tools.checkstyle.api.Configuration;
-
 /**
  * Revision Info : $Author$ $Date$
  * Author : a.laguta
@@ -16,8 +13,6 @@ public class CheckerFactory {
 
     private PhraseAppPropertiesKeysChecker phraseAppPropertiesKeysChecker;
 
-    private Configuration configuration;
-
     public CheckerFactory() {
     }
 
@@ -28,9 +23,11 @@ public class CheckerFactory {
         return duplicatePropertiesKeysChecker;
     }
 
-    public PhraseAppPropertiesKeysChecker getPhraseAppPropertiesKeysChecker(String phraseAppToken) {
+    public PhraseAppPropertiesKeysChecker getPhraseAppPropertiesKeysChecker(
+            String phraseAppToken, String projectName) {
         if (phraseAppPropertiesKeysChecker == null) {
-            phraseAppPropertiesKeysChecker = new PhraseAppPropertiesKeysChecker(phraseAppToken);
+            phraseAppPropertiesKeysChecker = new PhraseAppPropertiesKeysChecker(
+                    phraseAppToken, projectName);
         }
         return phraseAppPropertiesKeysChecker;
     }

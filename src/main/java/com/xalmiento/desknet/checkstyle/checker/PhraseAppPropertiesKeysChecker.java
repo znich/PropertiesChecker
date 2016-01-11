@@ -3,9 +3,9 @@ package com.xalmiento.desknet.checkstyle.checker;
 import com.puppycrawl.tools.checkstyle.api.LocalizedMessages;
 import com.xalmiento.desknet.checkstyle.phraseapp.APIServiceFactory;
 import com.xalmiento.desknet.checkstyle.phraseapp.PhraseAppKeysAPIService;
+import com.xalmiento.desknet.checkstyle.phraseapp.impl.PhraseAppAPIProjectServiceImpl;
 import com.xalmiento.desknet.checkstyle.phraseapp.model.Key;
-import com.xalmiento.desknet.checkstyle.phraseapp.PhraseAppResourcesAPIService;
-import com.xalmiento.desknet.checkstyle.phraseapp.model.Property;
+import com.xalmiento.desknet.checkstyle.phraseapp.model.Project;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,73 +25,75 @@ import java.util.regex.Pattern;
  */
 public class PhraseAppPropertiesKeysChecker extends AbstractPropertiesKeysChecker {
 
-    public static final String MISSING_PROPERTY_MESSAGE =
+    private static final String MISSING_PROPERTY_MESSAGE =
             "Property key \"%s\" in %s is missing at PhraseApp.";
 
     public static final String WRONG_TAG_MESSAGE =
             "Property key \"%s\" has not the required tag name \"%s\".";
+
 
     public static final String DELETED_KEY_MESSAGE =
             "Property key \"%s\" was deleted from %s, but it still exists at PhraseApp.";
 
     public static final String AJAX_PROPERTIES_SUFFIX = "Msg";
 
-    public static final String AJAX_TAG_REGEXP = "^((?!" + AJAX_PROPERTIES_SUFFIX + ").*)"
-            + AJAX_PROPERTIES_SUFFIX +"\\.properties$";
-
     public static final String APPLICATION_TAG_REGEXP = "^((?!\\.properties).*)\\.properties$";
+
+    private static final String AJAX_TAG_REGEXP = "^((?!" + AJAX_PROPERTIES_SUFFIX + ").*)"
+            + AJAX_PROPERTIES_SUFFIX + "\\.properties$";
 
     private String phraseAppToken;
     private APIServiceFactory apiServiceFactory;
 
-    public PhraseAppPropertiesKeysChecker(String phraseAppToken) {
+
+    public PhraseAppPropertiesKeysChecker(String phraseAppToken, String projectName) {
         this.phraseAppToken = phraseAppToken;
+
+        initServiceFactory(projectName);
+    }
+
+    private void initServiceFactory(String projectName) {
+        if (apiServiceFactory == null) {
+            apiServiceFactory = new APIServiceFactory(projectName);
+        }
     }
 
     @Override
     public LocalizedMessages processCheck(File file, List<String> lines) {
-        initServiceFactory();
-        findMissingProperty(file, lines);
-        findDeletedProperty(file);
-        return getMessageCollector();
-    }
-
-    private void initServiceFactory() {
-        if (apiServiceFactory == null) {
-            apiServiceFactory = new APIServiceFactory();
-        }
-    }
-
-    private void findMissingProperty(File file, List<String> lines){
         try {
             Set<String> existKeys = getKeys(file);
-            PhraseAppKeysAPIService keysService = apiServiceFactory.getKeysService(phraseAppToken);
-
-            List<Key> keys = keysService.getKeys(existKeys.toArray(new String[existKeys.size()]));
-            List<String> keysNames = getKeysNames(keys);
-
-            for (String exist : existKeys) {
-                if (keysNames == null || !keysNames.contains(exist)) {
-                    log(findRowNumber(exist, lines), String.format(
-                            MISSING_PROPERTY_MESSAGE, exist, file.getName()));
-                }
-            }
-
-            String currentFileTag = parseCurrentFileTag(file);
-
-            for (Key key : keys) {
-                if (!key.hasTag(currentFileTag)) {
-                    String name = key.getName();
-                    log(findRowNumber(name, lines), String.format(
-                            WRONG_TAG_MESSAGE, name, currentFileTag));
-                }
-            }
-
+            findMissingProperty(file, lines, existKeys);
+            findDeletedProperty(file, existKeys);
         } catch (IOException e) {
             log(0, "unable.open", file.getPath());
         }
+        return getMessageCollector();
+    }
 
-        getMessageCollector();
+    private void findMissingProperty(File file, List<String> lines, Set<String> existKeys) {
+        PhraseAppKeysAPIService keysService = apiServiceFactory.getKeysService(phraseAppToken);
+
+        List<Key> keys = keysService.getKeys(existKeys);
+
+        List<String> keysNames = getKeysNames(keys);
+
+        for (String exist : existKeys) {
+            if (keysNames == null || !keysNames.contains(exist)) {
+                log(findRowNumber(exist, lines), String.format(
+                        MISSING_PROPERTY_MESSAGE, exist, file.getName()));
+            }
+        }
+
+        String currentFileTag = parseCurrentFileTag(file);
+
+        for (Key key : keys) {
+            if (!key.hasTag(currentFileTag)) {
+                String name = key.getName();
+                log(findRowNumber(name, lines), String.format(
+                        WRONG_TAG_MESSAGE, name, currentFileTag));
+            }
+        }
+
     }
 
     private List<String> getKeysNames(Collection<Key> keys) {
@@ -99,10 +101,21 @@ public class PhraseAppPropertiesKeysChecker extends AbstractPropertiesKeysChecke
             return null;
         }
         List<String> result = new ArrayList<String>();
-        for (Key key: keys) {
+        for (Key key : keys) {
             result.add(key.getName());
         }
         return result;
+    }
+
+    private void findDeletedProperty(File file, Set<String> existKeys) {
+        String currentFileTag = parseCurrentFileTag(file);
+        List<Key> keys = apiServiceFactory.getKeysService(phraseAppToken).getKeys(currentFileTag);
+
+        for (Key key : keys) {
+            if (!existKeys.contains(key.getName())) {
+                log(0, String.format(DELETED_KEY_MESSAGE, key, file.getName()));
+            }
+        }
     }
 
     private String parseCurrentFileTag(File file) {
@@ -116,40 +129,17 @@ public class PhraseAppPropertiesKeysChecker extends AbstractPropertiesKeysChecke
         return null;
     }
 
-    private void findDeletedProperty(File file) {
-        try {
-            Set<String> existKeys = getKeys(file);
-            PhraseAppResourcesAPIService resourcesService =
-                    apiServiceFactory.getResourcesService(phraseAppToken);
-
-            List<Property> properties = resourcesService.getProperties(parseCurrentFileTag(file));
-
-            for (Property property : properties) {
-                String key = property.getKey();
-                if (!existKeys.contains(key)) {
-                    log(0, String.format(DELETED_KEY_MESSAGE, key, file.getName()));
-                }
-            }
-        } catch (IOException e) {
-            log(0, "unable.open", file.getPath());
-        }
-    }
-
     //test method
     public static void main(String[] args) {
-        /*String s = parseCurrentFileTag2("CommonMsg.properties");
-        System.out.println(s);*/
-     /*   PhraseAppResourcesAPIService resourcesAPIService = new PhraseAppResourcesAPIServiceImpl(
-                "3bc90a9df273f51636dc00ff47226df8");
-        List<Property> common = resourcesAPIService.getProperties("Common");*/
-        System.out.println(parseCurrentFileTag2("Common.properties"));
-    }
+        String token = "";
+        PhraseAppAPIProjectServiceImpl resourcesAPIService = new PhraseAppAPIProjectServiceImpl(
+                token);
 
-    private static String parseCurrentFileTag2(String file) {
-        Matcher matcher = Pattern.compile(APPLICATION_TAG_REGEXP).matcher(file);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-        return null;
+
+        PhraseAppAPIProjectServiceImpl service = new PhraseAppAPIProjectServiceImpl(token);
+        List<Project> projects = service.getProjects();
+
+
+        System.out.println(projects);
     }
 }

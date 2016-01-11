@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.xalmiento.desknet</groupId>
     <artifactId>checkStyle</artifactId>
-    <version>1.1.1</version>
+    <version>1.2.0</version>
     <packaging>jar</packaging>
     <name>checkStyle</name>
     <dependencies>
@@ -53,7 +53,6 @@
                 </configuration>
             </plugin>
 
-            <!-- Make this jar executable -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -75,7 +74,6 @@
                             <excludeGroupIds>
                                 com.puppycrawl.tools, com.google,
                             </excludeGroupIds>
-
                         </configuration>
                     </execution>
                 </executions>
@@ -92,6 +90,19 @@
                         </manifest>
                     </archive>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
         </plugins>

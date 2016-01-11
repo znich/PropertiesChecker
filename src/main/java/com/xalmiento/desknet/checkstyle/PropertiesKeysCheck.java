@@ -1,19 +1,13 @@
 package com.xalmiento.desknet.checkstyle;
 
-import com.puppycrawl.tools.checkstyle.api.AbstractFileSetCheck;
-import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
-import com.puppycrawl.tools.checkstyle.api.Configuration;
-import com.puppycrawl.tools.checkstyle.api.LocalizedMessage;
-import com.puppycrawl.tools.checkstyle.api.LocalizedMessages;
+import com.puppycrawl.tools.checkstyle.api.*;
+import com.xalmiento.desknet.checkstyle.checker.CheckerFactory;
 import com.xalmiento.desknet.checkstyle.checker.DuplicatePropertiesKeysChecker;
 import com.xalmiento.desknet.checkstyle.checker.PhraseAppPropertiesKeysChecker;
-import com.xalmiento.desknet.checkstyle.phraseapp.APIServiceFactory;
-import com.xalmiento.desknet.checkstyle.checker.CheckerFactory;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Revision Info : $Author$ $Date$
@@ -30,9 +24,9 @@ public class PropertiesKeysCheck extends AbstractFileSetCheck {
 
     private String phraseAppToken;
 
-    private Boolean enablePhraseApp;
+    private String projectName;
 
-    private APIServiceFactory apiServiceFactory;
+    private Boolean enablePhraseApp;
 
     private CheckerFactory checkerFactory;
 
@@ -70,10 +64,6 @@ public class PropertiesKeysCheck extends AbstractFileSetCheck {
     }
 
     private void initServicesFactories() {
-        if (apiServiceFactory == null) {
-            apiServiceFactory = new APIServiceFactory();
-        }
-
         if (checkerFactory == null) {
             checkerFactory = new CheckerFactory();
         }
@@ -98,10 +88,21 @@ public class PropertiesKeysCheck extends AbstractFileSetCheck {
     private void checkPhraseApp(File file, List<String> lines) {
         if (enablePhraseApp && phraseAppToken != null) {
             PhraseAppPropertiesKeysChecker phraseAppChecker
-                    = checkerFactory.getPhraseAppPropertiesKeysChecker(phraseAppToken);
+                    = checkerFactory.getPhraseAppPropertiesKeysChecker(phraseAppToken, projectName);
             LocalizedMessages messages = phraseAppChecker.processCheck(file, lines);
             updateMessages(messages);
         }
+    }
+
+    public static void main(String[] args) {
+        PropertiesKeysCheck keysCheck = new PropertiesKeysCheck();
+
+        keysCheck.setDirectories(new String[]{"\\"});
+        keysCheck.setEnablePhraseApp(true);
+        keysCheck.setPhraseAppToken("ccfce0bdc1f107ae93a730f38ec14cc0af3184abccdd3df2e3e558709bf4772f");
+        keysCheck.setProjectName("Desk-Net");
+        File file = new File("d:\\Programms\\Java\\workspace\\PropertiesChecker\\src\\main\\resources\\com\\xalmiento\\desknet\\checkstyle\\AbsenceSSSMsg.properties");
+        keysCheck.processFiltered(file, new ArrayList<String>());
     }
 
     @Override
@@ -121,18 +122,12 @@ public class PropertiesKeysCheck extends AbstractFileSetCheck {
         this.enablePhraseApp = enablePhraseApp;
     }
 
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
     public void setDirectories(String[] directories) {
         this.directories = directories;
     }
 
-
-    /**
-     * Test
-     * @param args
-     */
-    public static void main(String[] args) {
-        Matcher matcher = Pattern.compile(PROPERTIES_FILE_REGEX).matcher("");
-        System.out.println(matcher.find());
-
-    }
 }

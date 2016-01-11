@@ -1,7 +1,10 @@
 package com.xalmiento.desknet.checkstyle.phraseapp;
 
+import com.xalmiento.desknet.checkstyle.phraseapp.impl.PhraseAppAPIProjectServiceImpl;
 import com.xalmiento.desknet.checkstyle.phraseapp.impl.PhraseAppKeysAPIServiceImpl;
-import com.xalmiento.desknet.checkstyle.phraseapp.impl.PhraseAppResourcesAPIServiceImpl;
+import com.xalmiento.desknet.checkstyle.phraseapp.model.Project;
+
+import java.util.List;
 
 /**
  * Revision Info : $Author$ $Date$
@@ -13,22 +16,36 @@ import com.xalmiento.desknet.checkstyle.phraseapp.impl.PhraseAppResourcesAPIServ
 public class APIServiceFactory {
 
     private PhraseAppKeysAPIService keysAPIService;
-    private PhraseAppResourcesAPIService resourcesAPIService;
+    private PhraseAppAPIProjectService projectService;
+    private String projectId;
+    private String projectName;
 
-    public APIServiceFactory() {
+    public APIServiceFactory(String projectName) {
+        this.projectName = projectName;
     }
 
     public PhraseAppKeysAPIService getKeysService(String token) {
-          if (keysAPIService == null) {
-              keysAPIService = new PhraseAppKeysAPIServiceImpl(token);
-          }
+        initializeProjectId(token);
+
+        if (keysAPIService == null) {
+            keysAPIService = new PhraseAppKeysAPIServiceImpl(projectId, token);
+        }
         return keysAPIService;
     }
 
-    public PhraseAppResourcesAPIService getResourcesService(String token) {
-        if (resourcesAPIService == null) {
-            resourcesAPIService = new PhraseAppResourcesAPIServiceImpl(token);
+    private void initializeProjectId(String token) {
+        if (projectService == null) {
+            projectService = new PhraseAppAPIProjectServiceImpl(token);
         }
-        return resourcesAPIService;
+
+        if (projectId == null) {
+            List<Project> projects = projectService.getProjects();
+            for (Project project : projects) {
+                if (projectName.equals(project.getName())) {
+                    projectId = project.getId();
+                    return;
+                }
+            }
+        }
     }
 }

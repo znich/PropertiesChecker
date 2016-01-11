@@ -60,8 +60,8 @@ public class HttpRequestUtil {
             HttpResponse<String> response) throws IncorrectResponseCodeException {
         if (response.getCode() != 200) {
             throw new IncorrectResponseCodeException(
-                    "Responce code: " + response.getCode()
-                            + "; Responce text: " + response.getBody());
+                    "Response code: " + response.getCode()
+                            + "; Response text: " + response.getBody());
         }
         return response.getBody();
     }
@@ -105,8 +105,18 @@ public class HttpRequestUtil {
             Class<T> clazz,
             Map<String, String> parameters,
             Map<String, String> properties) throws IOException {
-        return checkResponse(service.requestGet(
-                urlAddress, parameters, properties, new JsonListParser<T>(clazz)));
+
+        PaginationHttpResponse<List<T>> response = service.requestGet(
+                urlAddress, parameters, properties, new JsonListParser<T>(clazz));
+
+        List<T> result = checkResponse(response);
+
+        while (response.hasNext()) {
+            response = service.requestGet(
+                    response.getNextLink(), parameters, properties, new JsonListParser<T>(clazz));
+            result.addAll(checkResponse(response));
+        }
+        return result;
     }
 
     public static <T> List<T> jsonListRequestGet(
@@ -116,7 +126,7 @@ public class HttpRequestUtil {
             Map<String, String[]> arrays,
             Map<String, String> properties) throws IOException {
         return checkResponse(service.requestGet(
-                urlAddress, parameters, arrays, properties, new JsonListParser<T>(clazz)));
+                urlAddress, parameters, properties, new JsonListParser<T>(clazz)));
     }
 
     public static <T> List<T> jsonListRequestPost(

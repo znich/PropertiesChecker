@@ -13,25 +13,25 @@ public class Key {
    /*           id\": 1,\n"
             +"  \"name\": \"helper.label\",\n"
             +"  \"description\": \"Some description\",\n"
-            +"  \"pluralized\": true|false,\n"
+            +"  \"plural\": true|false,\n"
             +"  \"data_type\": \"string|number|boolean|array\",\n"
-            +"  \"tag_list\": [\"mobile\", \"example-feature\"]*/
+            +"  \"tags\": [\"mobile\", \"example-feature\"]*/
 
-    private Long id;
+    private String id;
     private String name;
     private String description;
-    private  boolean  pluralized;
+    private  boolean plural;
     private String data_type;
-    private String[] tag_list;
+    private String[] tags;
 
     public Key() {
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -51,12 +51,12 @@ public class Key {
         this.description = description;
     }
 
-    public boolean isPluralized() {
-        return pluralized;
+    public boolean isPlural() {
+        return plural;
     }
 
-    public void setPluralized(boolean pluralized) {
-        this.pluralized = pluralized;
+    public void setPlural(boolean plural) {
+        this.plural = plural;
     }
 
     public String getData_type() {
@@ -67,19 +67,19 @@ public class Key {
         this.data_type = data_type;
     }
 
-    public String[] getTag_list() {
-        return tag_list;
+    public String[] getTags() {
+        return tags;
     }
 
-    public void setTag_list(String[] tag_list) {
-        this.tag_list = tag_list;
+    public void setTags(String[] tags) {
+        this.tags = tags;
     }
 
     public boolean hasTag(String otherTag) {
-        if (this.tag_list == null || otherTag == null) {
+        if (this.tags == null || otherTag == null) {
             return false;
         }
-        for (String tag: tag_list) {
+        for (String tag: tags) {
             if (tag.equals(otherTag)) {
                 return true;
             }
@@ -98,7 +98,7 @@ public class Key {
 
         Key key = (Key) o;
 
-        if (pluralized != key.pluralized) {
+        if (plural != key.plural) {
             return false;
         }
         if (data_type != null ? !data_type.equals(key.data_type) : key.data_type != null) {
@@ -114,7 +114,7 @@ public class Key {
             return false;
         }
         //noinspection RedundantIfStatement
-        if (!Arrays.equals(tag_list, key.tag_list)) {
+        if (!Arrays.equals(tags, key.tags)) {
             return false;
         }
 
@@ -126,9 +126,9 @@ public class Key {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (pluralized ? 1 : 0);
+        result = 31 * result + (plural ? 1 : 0);
         result = 31 * result + (data_type != null ? data_type.hashCode() : 0);
-        result = 31 * result + (tag_list != null ? Arrays.hashCode(tag_list) : 0);
+        result = 31 * result + (tags != null ? Arrays.hashCode(tags) : 0);
         return result;
     }
 
@@ -138,9 +138,9 @@ public class Key {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", pluralized=" + pluralized +
+                ", plural=" + plural +
                 ", data_type='" + data_type + '\'' +
-                ", tag_list=" + Arrays.toString(tag_list) +
+                ", tags=" + Arrays.toString(tags) +
                 '}';
     }
 }

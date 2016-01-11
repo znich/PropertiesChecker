@@ -36,11 +36,17 @@ public abstract class AbstractPropertiesKeysChecker extends AbstractFileSetCheck
     protected int findRowNumber(String key, List<String> lines) {
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
-            if (line != null && line.startsWith(key)) {  //TODO: AL fix for properties with same start name
+            if (line != null && checkPropertyKeyName(line, key)) {
                 return i + 1;
             }
         }
         return 0;
+    }
+
+    private boolean checkPropertyKeyName(String line, String name) {
+        name = name.replace(".", "\\.");
+        String regexp = "^" + name + "[\\s+|=].*$";
+        return line.matches(regexp);
     }
 
     public abstract LocalizedMessages processCheck(File file, List<String> lines);
