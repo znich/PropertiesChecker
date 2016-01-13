@@ -28,7 +28,7 @@ public class APIServiceFactory {
         initializeProjectId(token);
 
         if (keysAPIService == null) {
-            keysAPIService = new PhraseAppKeysAPIServiceImpl(projectId, token);
+            keysAPIService = new PhraseAppKeysAPIServiceImpl(token, projectId);
         }
         return keysAPIService;
     }

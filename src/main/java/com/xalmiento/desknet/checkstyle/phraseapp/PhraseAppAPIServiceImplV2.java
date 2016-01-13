@@ -15,7 +15,7 @@ import static com.xalmiento.desknet.checkstyle.http.HttpRequestUtil.jsonListRequ
  */
 public class PhraseAppAPIServiceImplV2<T> implements PhraseAppAPIService<T> {
 
-    private static final String apiUrl = "https://phraseapp.com/api/v2/projects/";
+    private static final String apiUrl = "https://api.phraseapp.com/api/v2/projects/";
     private static final String ELEMENTS_PER_PAGE = "100";
 
     public static final String QUERY_PARAM = "q";

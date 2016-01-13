@@ -99,9 +99,9 @@ public class PropertiesKeysCheck extends AbstractFileSetCheck {
 
         keysCheck.setDirectories(new String[]{"\\"});
         keysCheck.setEnablePhraseApp(true);
-        keysCheck.setPhraseAppToken("ccfce0bdc1f107ae93a730f38ec14cc0af3184abccdd3df2e3e558709bf4772f");
-        keysCheck.setProjectName("Desk-Net");
-        File file = new File("d:\\Programms\\Java\\workspace\\PropertiesChecker\\src\\main\\resources\\com\\xalmiento\\desknet\\checkstyle\\AbsenceSSSMsg.properties");
+        keysCheck.setPhraseAppToken("");
+        keysCheck.setProjectName("");
+        File file = new File("c:\\");
         keysCheck.processFiltered(file, new ArrayList<String>());
     }
 

@@ -4,13 +4,14 @@ import com.puppycrawl.tools.checkstyle.api.LocalizedMessages;
 import com.xalmiento.desknet.checkstyle.phraseapp.APIServiceFactory;
 import com.xalmiento.desknet.checkstyle.phraseapp.PhraseAppKeysAPIService;
 import com.xalmiento.desknet.checkstyle.phraseapp.impl.PhraseAppAPIProjectServiceImpl;
+import com.xalmiento.desknet.checkstyle.phraseapp.impl.PhraseAppKeysAPIServiceImpl;
 import com.xalmiento.desknet.checkstyle.phraseapp.model.Key;
-import com.xalmiento.desknet.checkstyle.phraseapp.model.Project;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -113,7 +114,7 @@ public class PhraseAppPropertiesKeysChecker extends AbstractPropertiesKeysChecke
 
         for (Key key : keys) {
             if (!existKeys.contains(key.getName())) {
-                log(0, String.format(DELETED_KEY_MESSAGE, key, file.getName()));
+                log(0, String.format(DELETED_KEY_MESSAGE, key.getName(), file.getName()));
             }
         }
     }
@@ -137,9 +138,10 @@ public class PhraseAppPropertiesKeysChecker extends AbstractPropertiesKeysChecke
 
 
         PhraseAppAPIProjectServiceImpl service = new PhraseAppAPIProjectServiceImpl(token);
-        List<Project> projects = service.getProjects();
+        PhraseAppKeysAPIService service1 = new PhraseAppKeysAPIServiceImpl(token, "");
+        HashSet<String> keys1 = new HashSet<String>();
+        List<Key> keys = service1.getKeys(keys1);
 
-
-        System.out.println(projects);
+        System.out.println(keys);
     }
 }

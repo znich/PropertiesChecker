@@ -71,48 +71,7 @@ public class HttpRequestService {
             Map<String, String> parameters,
             Map<String, String> headers,
             Parser<T> parser) throws IOException {
-        HttpClient httpClient = null;
-        try {
-            httpClient = HttpClientBuilder.create().setSSLSocketFactory(
-                    new SSLConnectionSocketFactory(SSLContext.getDefault()) {
-                        @Override
-                        protected void prepareSocket(SSLSocket socket) throws IOException {
-                            super.prepareSocket(socket);
-                            socket.setEnabledProtocols(new String[]{"TLSv1"});
-                            /*socket.setEnabledCipherSuites(new String[]{
-                                   *//* "SSL_DH_anon_EXPORT_WITH_RC4_40_MD5",
-                                    "SSL_DH_anon_WITH_RC4_128_MD5",
-                                    "SSL_RSA_EXPORT_WITH_RC4_40_MD5",
-                                    "SSL_RSA_WITH_RC4_128_MD5",
-                                    "SSL_RSA_WITH_RC4_128_SHA",
-                                    "TLS_ECDHE_ECDSA_WITH_RC4_128_SHA",
-                                    "TLS_ECDHE_RSA_WITH_RC4_128_SHA",
-                                    "TLS_ECDH_ECDSA_WITH_RC4_128_SHA",
-                                    "TLS_ECDH_RSA_WITH_RC4_128_SHA",
-                                    "TLS_ECDH_anon_WITH_RC4_128_SHA",
-                                    "TLS_KRB5_EXPORT_WITH_RC4_40_MD5",
-                                    "TLS_KRB5_EXPORT_WITH_RC4_40_SHA",
-                                    "TLS_KRB5_WITH_RC4_128_MD5",
-                                    "TLS_KRB5_WITH_RC4_128_SHA",*//*
-                                    *//*"TLS_RSA_WITH_3DES_EDE_CBC_SHA",*//*
-                                   *//* "TLS_RSA_WITH_AES_128_CBC_SHA",*//*
-                                    *//*"TLS_RSA_WITH_AES_256_CBC_SHA",*//*
-                                    *//*"TLS_RSA_WITH_AES_128_CBC_SHA256",*//*
-                                    *//*"TLS_RSA_WITH_AES_128_GCM_SHA256",*//*
-                                    *//*"TLS_RSA_WITH_AES_256_GCM_SHA384",*//*
-                                    "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
-                                    *//*"TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA",*//*
-                                    *//*"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256",*//*
-                                    *//*"TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384",*//*
-                                   *//* "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",*//*
-                                    *//*"TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"*//*
-                            });*/
-                        }
-                    })
-                    .build();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
+        HttpClient httpClient = HttpClientBuilder.create().build();
 
         URI uri;
         try {
