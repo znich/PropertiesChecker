@@ -134,8 +134,19 @@ public class HttpRequestUtil {
             Class<T> clazz,
             Object body,
             Map<String, String> properties) throws IOException {
-        return checkResponse(service.requestPost(
-                urlAddress, body, properties, new JsonListParser<T>(clazz)));
+
+        PaginationHttpResponse<List<T>> response = service.requestPost(
+                urlAddress, body, properties, new JsonListParser<T>(clazz));
+
+        List<T> result = checkResponse(response);
+
+        while (response.hasNext()) {
+            response = service.requestPost(
+                    response.getNextLink(), body, properties, new JsonListParser<T>(clazz));
+            result.addAll(checkResponse(response));
+        }
+
+        return result;
     }
 
     public static <T> T jsonRequestGet(

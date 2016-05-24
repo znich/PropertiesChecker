@@ -18,7 +18,7 @@ import java.util.Set;
 public class PhraseAppKeysAPIServiceImpl extends PhraseAppAPIServiceImplV2<Key>
         implements PhraseAppKeysAPIService {
 
-    private static final String KEYS_URL = "keys";
+    private static final String KEYS_URL = "keys/search";
 
     public PhraseAppKeysAPIServiceImpl(String token, String projectId) {
         super(token, projectId);
@@ -26,7 +26,7 @@ public class PhraseAppKeysAPIServiceImpl extends PhraseAppAPIServiceImplV2<Key>
 
     @Override
     public List<Key> getKeys() {
-        return getList(KEYS_URL, Key.class, new HashMap<String, String>(), null);
+        return postList(KEYS_URL, Key.class, new HashMap<String, String>(), null);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class PhraseAppKeysAPIServiceImpl extends PhraseAppAPIServiceImplV2<Key>
         HashMap<String, String> parameters = new HashMap<String, String>();
         parameters.put(QUERY_PARAM, createKeyNameSearchQuery(keys));
 
-        return getList(KEYS_URL, Key.class, parameters, null,  null);
+        return postList(KEYS_URL, Key.class, parameters, null);
     }
 
     private String createKeyNameSearchQuery(Set<String> keys) {
@@ -52,7 +52,7 @@ public class PhraseAppKeysAPIServiceImpl extends PhraseAppAPIServiceImplV2<Key>
         HashMap<String, String> parameters = new HashMap<String, String>();
         parameters.put(QUERY_PARAM, createTagNameSearchQuery(tagName));
 
-        return getList(KEYS_URL, Key.class, parameters, null,  null);
+        return postList(KEYS_URL, Key.class, parameters, null);
     }
 
     private String createTagNameSearchQuery(String tagName) {

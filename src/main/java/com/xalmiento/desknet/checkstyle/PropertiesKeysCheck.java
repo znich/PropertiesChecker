@@ -101,7 +101,7 @@ public class PropertiesKeysCheck extends AbstractFileSetCheck {
         keysCheck.setEnablePhraseApp(true);
         keysCheck.setPhraseAppToken("");
         keysCheck.setProjectName("");
-        File file = new File("c:\\");
+        File file = new File("");
         keysCheck.processFiltered(file, new ArrayList<String>());
     }
 

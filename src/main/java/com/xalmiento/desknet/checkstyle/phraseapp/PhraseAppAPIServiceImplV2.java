@@ -9,10 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 import static com.xalmiento.desknet.checkstyle.http.HttpRequestUtil.jsonListRequestGet;
+import static com.xalmiento.desknet.checkstyle.http.HttpRequestUtil.jsonListRequestPost;
 
-/**
- * Created by Anatoly on 21.11.2015.
- */
+
 public class PhraseAppAPIServiceImplV2<T> implements PhraseAppAPIService<T> {
 
     private static final String apiUrl = "https://api.phraseapp.com/api/v2/projects/";
@@ -33,17 +32,10 @@ public class PhraseAppAPIServiceImplV2<T> implements PhraseAppAPIService<T> {
     }
 
     @Override
-    public List<T> getList(String url, Class<T> type, Map<String, String> parameters, Map<String, String> headers) {
-        return getList(url, type, parameters, null, headers);
-    }
-
-    @Override
     public List<T> getList(
             String url,
             Class<T> type,
-            Map<String, String> parameters,
-            Map<String, String[]> arrays,
-            Map<String, String> headers) {
+            Map<String, String> parameters, Map<String, String> headers) {
 
         if (headers == null) {
             headers = new HashMap<String, String>();
@@ -59,6 +51,32 @@ public class PhraseAppAPIServiceImplV2<T> implements PhraseAppAPIService<T> {
 
         try {
             result = jsonListRequestGet(createUrl(url), type, parameters, headers);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    @Override
+    public List<T> postList(
+            String url,
+            Class<T> type,
+            Map<String, String> parameters,
+            Map<String, String> headers) {
+
+        if (headers == null) {
+            headers = new HashMap<String, String>();
+        }
+        addToken(headers);
+
+        if (parameters == null) {
+            parameters = new HashMap<String, String>();
+        }
+        addElementsPerPage(parameters);
+
+        List<T> result = new ArrayList<T>();
+        try {
+            result = jsonListRequestPost(createUrl(url), type, parameters, headers);
         } catch (IOException e) {
             e.printStackTrace();
         }
